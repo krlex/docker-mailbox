@@ -1,5 +1,4 @@
-FROM ubuntu:14.04
-MAINTAINER Jonas Friedmann <j@frd.mn> version: 0.1
+FROM witchman/debian
 ENV DEBIAN_FRONTEND noninteractive
 
 # Update locale
@@ -35,12 +34,12 @@ RUN mv composer.phar /usr/local/bin/composer
 RUN rm /etc/nginx/sites-enabled/default
 ADD nginx/vimbadmin /etc/nginx/sites-available/vimbadmin
 RUN ln -sf /etc/nginx/sites-available/vimbadmin /etc/nginx/sites-enabled/vimbadmin
-RUN mkdir /var/www
+RUN mkdir -p /var/www
 ADD nginx/correct-vimbadmin-hostname.sh /tmp/correct-vimbadmin-hostname.sh
 RUN /bin/sh /tmp/correct-vimbadmin-hostname.sh
 
 # Configure ViMbAdmin
-RUN mkdir /var/www/vimbadmin
+RUN mkdir -p /var/www/vimbadmin
 RUN export INSTALL_PATH=/var/www/vimbadmin
 RUN composer config -g github-protocols https
 RUN composer create-project --no-interaction opensolutions/vimbadmin /var/www/vimbadmin -s dev
@@ -85,7 +84,7 @@ RUN apt-get install -y postfix postfix-mysql
 # Add postfix configuration files
 ADD postfix/main.cf /etc/postfix/main.cf
 ADD postfix/master.cf /etc/postfix/master.cf
-RUN mkdir /etc/postfix/mysql
+RUN mkdir -p /etc/postfix/mysql
 ADD postfix/mysql/virtual_alias_maps.cf /etc/postfix/mysql/virtual_alias_maps.cf
 ADD postfix/mysql/virtual_domains_maps.cf /etc/postfix/mysql/virtual_domains_maps.cf
 ADD postfix/mysql/virtual_mailbox_maps.cf /etc/postfix/mysql/virtual_mailbox_maps.cf
@@ -101,7 +100,7 @@ RUN /bin/cp /etc/services /var/spool/postfix/etc/services
 #VOLUME /var/mail/vhosts
 RUN groupadd -g 5000 vmail
 RUN useradd -g vmail -u 5000 vmail -d /var/vmail
-RUN mkdir /var/vmail
+RUN mkdir -p /var/vmail
 RUN chown vmail:vmail /var/vmail
 
 # Add dovecot configuration files
